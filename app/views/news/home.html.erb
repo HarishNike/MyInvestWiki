@@ -1,0 +1,88 @@
+<style>
+
+
+
+
+document.addEventListener("DOMContentLoaded", function(event) { 
+            var scrollposx = localStorage.getItem('scrollposx');
+            var scrollposy = localStorage.getItem('scrollposy');
+            if(scrollposx && scrollposy)
+            window.scrollTo(scrollposx,scrollposy)
+            
+        });
+        
+        $(window).scroll(function() {
+            console.log("scrolling"+window.scrollX+"-"+window.scrollY)
+            localStorage.setItem('scrollposx', window.scrollX);
+            localStorage.setItem('scrollposy', window.scrollY);
+          });
+  
+        
+  
+</style>
+
+
+<div class="GrowwLearningSection">
+        <h2 class="GrowwLearning_Heading"> My Invest Wiki Picks </h2>
+
+        <div class="GrowwLearning_Container">
+            <a href="/news/wiki?q=stock" class="howToSelect">
+                <div class="GrowwLeaning_Image">
+                    <img src="/assets/background.webp">
+                </div>
+                <div class="GrowwLearning_Details">
+                Top Picks for 
+                    Equity Market Cap
+                </div>
+
+            </a>
+            <a  href="/news/wiki?q=gold" class="beginnersGuide">
+                <div class="GrowwLeaning_Image">
+                    <img src="/assets/gold-silver.webp">
+                </div>
+                <div class="GrowwLearning_Details">
+                   Top Picks for gold
+                   Silver Commodity Market
+                </div>
+            </a>
+            <a  href="/news/wiki?q=cryptocurrency" class="howToDiversify">
+                <div class="GrowwLeaning_Image">
+                    <img src="/assets/bitcoin.jpeg">
+                </div>
+                <div class="GrowwLearning_Details">
+                   To know about Crypto Market Cap
+                </div>
+            </a>
+        </div>
+
+        <div class="GrowwLearning_moreSection">
+            <a href="/headlines" style="color:red">
+                View Top Headlines
+                <i class="fa-solid fa-arrow-right"></i> 
+            </a>
+        </div>
+    </div>
+
+
+
+
+    <div class="GrowwProduct">
+        <h4 class="yourMoneyYourChoice_Text">Deploy Your Capital </h4>
+    </div>
+
+    <div class="GrowwProduct">
+    <div class="OurProduct_Text"><%= current_user.first_name.upcase %>'s  WATCHLIST </div>
+    </div>
+
+
+<%= render :template => "equities/index" %>
+
+
+
+<div class="GrowwProduct">
+<div class="OurProduct_Text"><%= current_user.first_name.upcase %>'s  BOOKMARKS </div>
+</div>
+
+<%= render :template => "bookmarks/index" %>
+<!--
+-->

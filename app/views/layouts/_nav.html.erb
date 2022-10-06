@@ -1,0 +1,66 @@
+<script>
+
+
+document.addEventListener("DOMContentLoaded", function(event) { 
+            var scrollposx = localStorage.getItem('scrollposx');
+            var scrollposy = localStorage.getItem('scrollposy');
+
+            if(scrollposx && scrollposy)
+            window.scrollTo(scrollposx,scrollposy)
+            
+        });
+
+
+        $(window).scroll(function() {
+         
+          localStorage.setItem('scrollposx', window.scrollX);
+          localStorage.setItem('scrollposy', window.scrollY);
+        });
+
+      
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollposx', window.scrollX);
+            localStorage.setItem('scrollposy', window.scrollY);
+            
+        };
+
+
+</script>
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" >
+  <a class="navbar-brand" href="/">MyInvestmentWiki</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse align-right" id="navbarSupportedContent">
+    <ul class="nav navbar-right navbar-nav justify-content-center ml-md-auto">
+   <!--   <li class="nav-item">
+        <a class="nav-link" href="/headlines" style="color:white">Headlines</a>
+      </li> -->
+    <li class="nav-item">
+        <a class="nav-link" href="/equities" style="color:white">Equity</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/search" style="color:white">Search</a>
+    </li>
+      <% if !current_user %>
+          <li class="nav-item">
+            <a class="nav-link" href="/login" style="color:white">Login</a>
+          </li>
+      <% else %>
+          <li class="nav-item" >
+            <%= link_to 'Account', :account , class: 'nav-link', style: 'color:white' %>
+          </li>
+          <li class="nav-item" style="color:white"> 
+            <%= button_to 'Log out', session_path, method: :delete, class: 'btn' %>
+          </li>
+      <% end %>
+    </ul>
+  </div>
+</nav>

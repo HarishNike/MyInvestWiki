@@ -1,0 +1,134 @@
+
+
+
+<div id="container" ></div>
+<div class="row">
+
+
+<div class="col-sm-10" id="some">
+</div>
+
+<div class="col-6 col-sm-4" style="background-color:gray">Opens at : <%= @articles[@articles.length-1]['open'] %></div>
+    <div class="col-6 col-sm-4" style="background-color:gray">Previous Day Close:
+    <%= @articles[@articles.length-1]['close'] %>
+    </div>
+
+    
+    <div class="w-100 d-none d-md-block"></div>
+
+    <div class="col-6 col-sm-4" style="background-color:gray">Today's High :
+    <%= @articles[@articles.length-1]['high'] %>
+    </div>
+    <div class="col-6 col-sm-4"style="background-color:gray" >Today's Low : 
+    <%= @articles[@articles.length-1]['low'] %>
+    </div>
+</div>
+
+
+<script>
+var  prices=[]
+$(document).ready(
+function()
+{
+ drawHighCharts()
+function drawHighCharts()
+{       
+    
+
+          
+        var theTitle='Stock Market Margin for Symbol: ' + ' <%= @symbol %>' 
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'some'
+            },
+            title: {
+                text: theTitle
+            },
+            networks: ['twitter','facebook','tumblr','pinterest','googleplus'],
+            xAxis: {
+                categories:<%= raw @dates%> // reference categories to an array variabile
+            },
+            yAxis: {
+                    title: {
+                            text: 'Price'
+                    }
+            },
+            series: [{
+              
+                name:' <%= @symbol %> ',
+                data: <%= raw @close %> ,
+                Open: <%= raw @open %> , 
+                Low:<%= raw @low %> ,
+                High:<%= raw @high %> ,
+                
+            }]
+        
+})
+
+
+}
+}
+
+)
+    </script>
+   
+
+    <br><br>
+    <center style="color:blue"><b>Latest Updates about Symbol : <%=@symbol%></b></center>
+<br><br>
+ <div class="container">
+ 
+ <%= will_paginate @news,:remote => true, :param_name => "stock_news_page", renderer: WillPaginate::ActionView::BootstrapLinkRenderer %>
+  
+ <div class ="row">
+    <% @news.each_with_index do |x, article_key| %>
+      <% if  x['url']!=nil and x['headline'].length >1 %>
+      <div class="card col-lg-4 col-md-6 col-sm-12 article">
+
+        <span 
+          data-url="<%= x['url'] %>" 
+          class="article-title" 
+          id="article-<%= article_key %>"
+          title="<%= x['headline']%>" 
+          style="font-weight: bold;"
+        > 
+            <%= x['headline'] %>     
+        </span>
+        <%= social_share_button_tag("some message",:url => x['url'],desc: x['headline']) %>
+
+        <% if current_user %>
+
+        <% if @bookmarked.where(:link=>x['url']).blank? ==true %>
+          <i data-article-key="<%= article_key %>"  class="fa fa-bookmark-o" style="font-size:20px" data-toggle="modal" data-target="#create-bookmark"></i>
+          
+          <% else %>
+          <i class="fa fa-bookmark" style="font-size:20px"></i>
+          
+          <% end %> 
+       <% end %>
+
+
+        <span><%= x['source']%></span>
+
+        <%= image_tag(x['image'] || @image_placeholder, class: 'card-img-top') %>  
+
+
+        
+        <div class="card-body">
+          <h5 class="card-title"><% x['headline'] %></h5>
+          <p class="card-text"> <%= x['summary'] %></p>
+        </div>
+        
+      </div>
+    <% end %>
+    <% end %>
+  </div>  
+</div>
+
+
+<% if current_user %>
+  <%= render 'news/bookmark' %>
+<% end %>
+
+
+

@@ -1,0 +1,143 @@
+<script>
+
+
+
+
+
+$(document).ready(function(){
+  
+  
+  setInterval(sendRequest, 10000);
+  
+  function sendRequest(){
+
+   $.ajax({
+    url: '<%=@ajaxcall%>',
+    method: 'get',
+    data:"",
+    success: function (data1){
+      var response =data1
+      console.log(response)
+      if('<%=@ajaxcall%>'=='https://cloud.iexapis.com/v1/stock/market/list/iexvolume?token=pk_b722f96a6a00437f9cd57b76f75b6128')
+        {
+      $.each(response,function(i, v) {
+    
+      console.log("SUCESS!!", v.latestPrice)
+      var elementExists = document.getElementById(v.symbol);
+      if(elementExists!=null)
+      document.getElementById(v.symbol).innerHTML =v.latestPrice
+    
+    });
+      }
+    else
+      {
+      console.log("SUCESS!!", response.latestPrice)
+      var elementExists = document.getElementById(response.symbol);
+      if(elementExists!=null)
+      document.getElementById(response.symbol).innerHTML =response.latestPrice
+      }
+
+    }  ,
+    
+    error: function () {
+        console.log("FAILURE");
+    },
+    async: false,
+    complete: function() {
+     
+     },
+
+     componentWillUnmount: function(){
+      if (this.ajaxRequest && this.ajaxRequest.abort){
+        this.ajaxRequest.abort()
+      }
+    }
+
+    });
+  
+    
+
+  };
+});
+</script>
+
+
+
+
+<div class="container">
+  <h1 class="text-center"> Search </h1>
+  <form>
+    <div class="form-group">
+      <input type="text" class="form-control" id="searchQuery" name="q"aria-describedby="emailHelp" placeholder="Enter something to search for" required>
+      <div class="text-danger">
+      <%= flash[:error] %>
+    </div>
+      <button type="submit" class="btn-outline-primary mx-auto" style="display:block; width: 200px; margin-top: 20px;">Submit</button>
+    </div>
+  </form>
+
+<div class="row" style="color:green">
+
+<%= flash[:info] %>
+
+</div>
+
+
+  
+  <% @stocks.each do |stock| %>
+    <div class="card">
+
+    <div class="card-header">
+    <a href="/chart?query=<%=stock['symbol']%>" class="">
+  <h5 class="mb-1" style="color: blue"> <%=stock['companyName']%> </h5>
+    </a>
+    </div>
+
+    <div class="card-body">
+    
+    
+  <p class="card-text" style="color:green">
+  Current Price :
+  </p>
+  <p class="card-text" id="<%= stock['symbol'] %>" >
+  <%= stock['latestPrice'] %>
+  </p>
+
+  <p class="card-text">
+ <p style="color:green"> Previous Close :</p> <%= stock['previousClose'] %> 
+  </p>
+
+
+  <!--
+  <p class="card-text">
+  52WeekLow : <%= stock['week52Low'] %> 
+  </p>
+
+  <p class="card-text">
+  52WeekHigh : <%= stock['week52High'] %>
+  </p>
+-->
+  <% if @userStocks.where(:ticker=>stock['symbol']).blank? ==true %>
+
+  
+  <%= button_to 'Add to Wishlist', equities_create_path(ticker: stock['symbol'],name: stock['companyName']),method: :post , class:"card-footer text-center" %>
+  
+
+  <% else %>
+
+  <div style="color:red">
+   Wishlisted  
+  </div>
+
+  
+  <% end %>
+
+
+</div>
+
+  
+</div>  
+  <% end %>
+
+
+</div>

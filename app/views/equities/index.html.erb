@@ -1,0 +1,149 @@
+<script>
+
+
+
+
+
+$(document).ready(function(){
+  
+  
+
+  
+  function sendRequest(){
+
+    
+<% @stocks.each do |stock| %>
+    
+   $.ajax({
+    
+    url: 'https://cloud.iexapis.com/v1/stock/'+'<%= stock['ticker'] %>'+'/quote?token=pk_b722f96a6a00437f9cd57b76f75b6128',
+    method: 'get',
+    data:"",
+    beforeSend: function (){
+      $("#loader").show();
+    },
+    success: function (data1){
+      $("#loader").hide();
+      var response =data1
+      console.log(response)
+      console.log("SUCESS!!", response.latestPrice)
+     
+      
+      var elementExists = document.getElementById(response.symbol);
+      var elementExistsl = document.getElementById(response.symbol+'52low');
+      var elementExistsH = document.getElementById(response.symbol+'52high');
+      var elementExistsP = document.getElementById(response.symbol+'prev');
+      if(elementExists!=null)
+      document.getElementById(response.symbol).innerHTML =response.latestPrice
+      if(elementExistsl!=null)
+      document.getElementById(response.symbol+'52low').innerHTML =response.week52Low
+      if(elementExistsH!=null)
+      document.getElementById(response.symbol+'52high').innerHTML =response.week52High
+      if(elementExistsP!=null)
+      document.getElementById(response.symbol+'prev').innerHTML =response.previousClose
+      
+
+    }  ,
+    
+    error: function () {
+        console.log("FAILURE");
+    },
+    async: false,
+    complete: function() {
+     
+     },
+
+     componentWillUnmount: function(){
+      if (this.ajaxRequest && this.ajaxRequest.abort){
+        this.ajaxRequest.abort()
+      }
+    }
+
+    });
+  
+    <% end %>
+
+  }
+  setInterval(sendRequest, 10000);
+});
+</script>
+
+
+
+
+
+
+
+<ul class="row" style="color:green">
+
+
+<% if @stocks.length == 0 %>
+There is currently no wishlisted equity products 
+<% end %>
+
+<center> <%= flash[:equitywishlist] %>
+</center>
+
+
+</ul>
+
+
+<% if @stocks.length >=1 %>
+
+<div class="container">
+<%= will_paginate @stocks,:remote => true,turbolinks: true, :param_name => "stock_page", renderer: WillPaginate::ActionView::BootstrapLinkRenderer %>
+
+
+
+<div class="row">
+
+
+<% @stocks.each do |stock| %>
+  
+  
+  <div class="card col-lg-4 col-md-7 col-sm-12 article">
+
+   
+  
+  <a href="/chart?query=<%=stock['ticker'] %>" style="color:#FF4500" class="card-title">
+     <b> <%=stock['ticker']%> </b>
+  </a>
+
+  <p class="card-text" style=""> 
+  
+  <%= stock['name'] %> </p> 
+
+  <%= social_share_button_tag("MyInvestMentWiki",:url=> @urls+stock['ticker']+@urlt, :desc=> Time.now.strftime("%d/%m/%Y %H:%M")) %><br><br> 
+
+  
+
+    <p class="card-text" style="color:green">   Current Price </p>
+    <p class="card-text" id="<%= stock['ticker'] %>"  >
+   <!-- "<%= stock['ticker'] %>" -->
+   <img src='/assets/reload.gif' width='32px' height='32px'>
+    </p>
+
+    <p class="card-text" style="color:green">Previous Close <p>
+    <p class="card-text" id="<%= stock['ticker']+'prev' %>">
+    <!-- "<%= stock['ticker']+'prev' %>" -->
+    <img src='/assets/reload.gif' width='32px' height='32px'>
+    </p>
+
+  
+  
+  
+    <div class="card-footer" style="margin-top: auto; color:blue">
+   <%= button_to 'Remove', {:controller => 'equities', :action => 'destroy', :ticker => stock['ticker'] } ,  method: :delete,  class: "btn btn-primary" , data: {confirm: 'are you sure you want to delete Symbol:'+stock['ticker']+' ?'}  %>
+
+    </div>
+  
+  </div>
+
+
+<% end %>
+
+
+</div>
+</div>
+<% end %>
+

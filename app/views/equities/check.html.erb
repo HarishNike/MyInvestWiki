@@ -1,0 +1,53 @@
+<script>
+
+$(document).ready(function(){
+  
+  
+
+  
+  function sendRequest(){
+
+    
+<% @stocks= current_user.stocks %>
+    
+   $.ajax({
+    
+    url: 'https://cloud.iexapis.com/v1/stock/'+'<%= stock['ticker'] %>'+'/quote?token=pk_b722f96a6a00437f9cd57b76f75b6128',
+    method: 'get',
+    data:"",
+    beforeSend: function (){
+      $("#loader").show();
+    },
+    success: function (data1){
+      $("#loader").hide();
+      var response =data1
+      console.log(response)
+      console.log("SUCESS!!", response.latestPrice)
+    
+
+    }  ,
+    
+    error: function () {
+        console.log("FAILURE");
+    },
+    async: false,
+    complete: function() {
+     
+     },
+
+     componentWillUnmount: function(){
+      if (this.ajaxRequest && this.ajaxRequest.abort){
+        this.ajaxRequest.abort()
+      }
+    }
+
+    });
+  
+    <% end %>
+
+  }
+  setInterval(sendRequest, 10000);
+});
+</script>
+
+

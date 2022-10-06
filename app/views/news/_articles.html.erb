@@ -1,0 +1,56 @@
+
+<div class="container">
+  <div class ="row">
+  
+    <% @articles.each_with_index do |x, article_key| %>
+    <% if x['title']!=nil and  x['description']!=nil  and  x['url']!=nil  %>  
+      <div class="card col-lg-4 col-md-6 col-sm-12 article">
+
+        <span 
+          data-url="<%= x['url'] %>" 
+          class="article-title" 
+          id="article-<%= article_key %>"
+          title="<%= x['title']%>" 
+          style="font-weight: bold;color: blue"
+        > 
+            <%= x['title'] %>     
+        </span>
+
+        <span><%= x['source']['name'] %></span>
+        
+        <span>
+        <%= social_share_button_tag("some message",:url => x['url'] ,desc: x['title']) %>
+      
+        <% if current_user %>
+
+        <% if @bookmarked.where(:link=>x['url']).blank? ==true %>
+          <i data-article-key="<%= article_key %>"  class="fa fa-bookmark-o" style="font-size:20px" data-toggle="modal" data-target="#create-bookmark"></i>
+          
+          <% else %>
+       <i class="fa fa-bookmark" style="font-size:20px"></i> 
+          
+          
+          <% end %> 
+       <% end %>
+
+
+         </span>  
+
+<% if x['urlToImage']!=nil %>
+        <%= image_tag(x['urlToImage'] || @image_placeholder, class: 'card-img-top') %>  
+  <% end %>
+        <div class="card-body">
+          <h5 class="card-title"><% x['title'] %></h5>
+          <p class="card-text"> <%= x['description'] %></p>
+        </div>
+        
+      </div>
+      <% end %>
+    <% end %>
+  </div>  
+</div>
+
+
+<% if current_user %>
+  <%= render 'bookmark' %>
+<% end %>
